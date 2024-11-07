@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 
 class ApplicationTheme {
+  static Color primaryLight =Color(0xff5D9CEC);
+  static Color primaryDark =Color(0xff5D9CEC);
   static ThemeData lightTheme = ThemeData(
+    primaryColor: primaryLight,
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      selectedIconTheme: IconThemeData(size: 30),
+      unselectedIconTheme: IconThemeData(size: 30),
+      selectedItemColor: primaryLight,
+    ),
     scaffoldBackgroundColor: const Color(0xffDFECDB),
     textTheme: const TextTheme(
       titleLarge: TextStyle(
@@ -37,8 +47,8 @@ class ApplicationTheme {
       bodySmall: TextStyle(
         fontSize: 16,
         fontFamily: 'Poppins',
-        fontWeight: FontWeight.bold,
-        color: Colors.green,
+        // fontWeight: FontWeight.bold,
+        color: Colors.black,
       ),
     ),
   );

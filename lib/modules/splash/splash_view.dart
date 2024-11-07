@@ -1,8 +1,7 @@
-import 'dart:async';
-
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:todo_app/core/page_routes_name.dart';
+import 'package:todo_app/modules/auth/login/login_view.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -13,25 +12,20 @@ class SplashView extends StatefulWidget {
 
 class _SplashViewState extends State<SplashView> {
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    Timer(
-      Duration(seconds: 8),
-      () => Navigator.pushReplacementNamed(
-        context,
-        PageRoutesName.login,
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Lottie.network(
-            'https://lottie.host/6dbd5d87-4392-423d-8027-4f957f70fc77/ppYxBVsuR6.json'),
+    return AnimatedSplashScreen(
+      splash: Column(
+        children: [
+          Center(
+            child: LottieBuilder.asset(
+              'assets/lottie/loading.json',
+            ),
+          ),
+        ],
       ),
+      backgroundColor: const Color(0xffDFECDB),
+      splashIconSize: 400,
+      nextScreen: LoginView(),
     );
   }
 }

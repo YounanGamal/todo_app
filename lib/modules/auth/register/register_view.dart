@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/core/page_routes_name.dart';
-import 'package:todo_app/modules/outh/login/login_view.dart';
 import 'package:todo_app/widget/custom_elevated_button.dart';
 import 'package:todo_app/widget/custom_text_button.dart';
 import 'package:todo_app/widget/custom_text_form_field.dart';
@@ -9,6 +9,9 @@ class RegisterView extends StatelessWidget {
   GlobalKey<FormState> formKey = GlobalKey();
 
   RegisterView({super.key});
+
+  TextEditingController? emailController = TextEditingController();
+  TextEditingController? passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +33,8 @@ class RegisterView extends StatelessWidget {
                   child: Column(
                     children: [
                       CustomTextFormField(
+
+                        icon: Icon(Icons.remove_red_eye),
                         hintText: 'Email',
                         validator: (value) {
                           if (value!.length < 6) {
@@ -39,6 +44,7 @@ class RegisterView extends StatelessWidget {
                       ),
                       const SizedBox(height: 8.0),
                       CustomTextFormField(
+                        icon: Icon(Icons.email),
                         hintText: 'Full name',
                         validator: (value) {
                           if (value!.length < 6) {
@@ -48,6 +54,7 @@ class RegisterView extends StatelessWidget {
                       ),
                       const SizedBox(height: 8.0),
                       CustomTextFormField(
+                        icon: Icon(Icons.email),
                         hintText: 'Password',
                         validator: (value) {
                           if (value!.length < 6) {
@@ -57,6 +64,7 @@ class RegisterView extends StatelessWidget {
                       ),
                       const SizedBox(height: 8.0),
                       CustomTextFormField(
+                        icon: Icon(Icons.email),
                         hintText: 'Password',
                         validator: (value) {
                           if (value!.length < 6) {
@@ -65,6 +73,7 @@ class RegisterView extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 16.0),
+
                       // DropdownButtonFormField(
                       //   items: countries,
                       //   icon: const Icon(Icons.expand_more),
@@ -87,9 +96,9 @@ class RegisterView extends StatelessWidget {
 
                       CustomElevatedButton(
                         buttonTitle: 'Sign Up',
-                        onPressed: () {
+                        onPressed: () async {
                           if (formKey.currentState!.validate()) {
-                            formKey.currentState!.save();
+                            // formKey.currentState!.save();
                           }
                         },
                       ),
@@ -109,6 +118,21 @@ class RegisterView extends StatelessWidget {
         }),
       ),
     );
+  }
+
+  void showSnackBar(BuildContext context, String title, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: color,
+        content: Text(title),
+      ),
+    );
+  }
+
+  Future<void> registerUser() async {
+    var auth = FirebaseAuth.instance;
+    UserCredential user = await auth.createUserWithEmailAndPassword(
+        email: emailController!.text, password: passwordController!.text);
   }
 }
 

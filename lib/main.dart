@@ -1,11 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/core/application_theme.dart';
 import 'package:todo_app/core/page_routes_name.dart';
 import 'package:todo_app/core/routes_generator.dart';
-import 'package:todo_app/modules/outh/login/login_view.dart';
-import 'package:todo_app/modules/outh/register/register_view.dart';
 
-void main() {
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const ToDoApp());
 }
 
