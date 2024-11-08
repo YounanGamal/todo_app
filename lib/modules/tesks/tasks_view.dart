@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/models/task_model.dart';
+import 'package:todo_app/utils/firebase_utils.dart';
 import 'package:todo_app/widget/custom_item_task.dart';
 
 class TasksView extends StatefulWidget {
@@ -13,7 +16,7 @@ class _TasksViewState extends State<TasksView> {
   final EasyInfiniteDateTimelineController controller =
       EasyInfiniteDateTimelineController();
 
-  var focusDate = DateTime(2024);
+  var focusDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -85,19 +88,19 @@ class _TasksViewState extends State<TasksView> {
                           color: Colors.white.withOpacity(0.6),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        dayNumStyle: TextStyle(
+                        dayNumStyle: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                           fontFamily: 'Poppins',
                           color: Colors.black,
                         ),
-                        monthStrStyle: TextStyle(
+                        monthStrStyle: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                           fontFamily: 'Poppins',
                           color: Colors.black,
                         ),
-                        dayStrStyle: TextStyle(
+                        dayStrStyle: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                           fontFamily: 'Poppins',
@@ -112,18 +115,32 @@ class _TasksViewState extends State<TasksView> {
             ],
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
+
         Expanded(
-          child: ListView.builder(
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return CustomItemTask();
+          child: StreamBuilder<QuerySnapshot<TaskModel>>(
+            stream: FirebaseUtils().getStreamData(focusDate),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Center(child: Text('There was an error '));
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              List<TaskModel> tasksModel=snapshot.data?.docs.map((e) => e.data()).toList()??[];
+              return ListView.builder(
+                itemCount: tasksModel.length ?? 0,
+                itemBuilder: (context, index) {
+                  return CustomItemTask(taskModel:tasksModel[index]);
+                },
+              );
             },
           ),
         )
       ],
     );
   }
+
 }

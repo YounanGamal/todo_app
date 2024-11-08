@@ -5,21 +5,22 @@ class CustomTextFormField extends StatelessWidget {
     super.key,
     required this.hintText,
     required this.validator,
-    required this.icon,
-      this.obscureText=false,
-     this.controller,
+    this.icon,
+    this.obscureText = false,
+    this.controller,
+    // this.maxLines,
   });
 
   final String hintText;
   FormFieldValidator<String>? validator;
   TextEditingController? controller;
-  Widget icon;
+  Widget? icon;
   bool obscureText;
+  // int? maxLines;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-
       controller: controller,
       validator: validator,
       obscureText: obscureText,
@@ -27,11 +28,10 @@ class CustomTextFormField extends StatelessWidget {
         color: Colors.black,
         fontSize: 16,
       ),
+      // maxLines: maxLines,
       decoration: InputDecoration(
-        errorStyle: TextStyle(
-
-        ),
-        suffixIcon:icon ,
+        errorStyle: const TextStyle(color: Colors.red, fontSize: 14),
+        suffixIcon: icon,
         hintText: hintText,
         hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
         filled: true,

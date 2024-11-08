@@ -17,4 +17,41 @@ class FirebaseUtils {
     taskModel.id = docRef.id;
     return docRef.set(taskModel);
   }
+
+  Future<List<TaskModel>> getDocumentData(DateTime selectedDate) async {
+    var collectionRef = getCollectionRef().where(
+      'selectedDate',
+      isEqualTo: selectedDate.millisecondsSinceEpoch,
+    );
+    var docRef = await collectionRef.get();
+    List<TaskModel> tasksList = [];
+    tasksList = docRef.docs
+        .map(
+          (e) => e.data(),
+        )
+        .toList();
+    return tasksList;
+  }
+
+  Stream<QuerySnapshot<TaskModel>> getStreamData(DateTime selectedDate) {
+    var collectionRef = getCollectionRef().where(
+      'selectedDate',
+      isEqualTo: selectedDate.millisecondsSinceEpoch,
+    );
+    return collectionRef.snapshots();
+  }
+
+  Future<void> deleteTask(TaskModel taskModel) async {
+    var collectionRef = getCollectionRef();
+    var docRef = await collectionRef.doc(taskModel.id);
+    return docRef.delete();
+  }
+
+  Future<void> updateTask(TaskModel taskModel) async {
+    var collectionRef = getCollectionRef();
+    var docRef = await collectionRef.doc(taskModel.id);
+    return docRef.update({
+      'isDone': true,
+    });
+  }
 }

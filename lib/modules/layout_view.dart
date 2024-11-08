@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/modules/setttings/settings_view.dart';
+import 'package:todo_app/modules/tesks/add_task_bottom_sheet.dart';
 import 'package:todo_app/modules/tesks/tasks_view.dart';
 
 class LayoutView extends StatefulWidget {
@@ -11,7 +12,7 @@ class LayoutView extends StatefulWidget {
 
 class _LayoutViewState extends State<LayoutView> {
   List<Widget> tabs = [
-     TasksView(),
+    TasksView(),
     const SettingsView(),
   ];
 
@@ -30,16 +31,13 @@ class _LayoutViewState extends State<LayoutView> {
         child: BottomNavigationBar(
           onTap: (value) {
             currentIndex = value;
-            setState(() {
-
-            });
+            setState(() {});
           },
           backgroundColor: Colors.transparent,
           elevation: 0,
           currentIndex: currentIndex,
           items: const [
             BottomNavigationBarItem(
-
                 icon: Icon(
                   Icons.list,
                 ),
@@ -58,7 +56,12 @@ class _LayoutViewState extends State<LayoutView> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(40),
         ),
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) => AddTaskBottomSheet(),
+          );
+        },
         child: CircleAvatar(
           backgroundColor: theme.primaryColor,
           radius: 25,

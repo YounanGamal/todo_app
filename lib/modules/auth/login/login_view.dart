@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:todo_app/core/email_validetor.dart';
 import 'package:todo_app/core/page_routes_name.dart';
+import 'package:todo_app/core/services/snack_bar_service.dart';
 import 'package:todo_app/widget/custom_elevated_button.dart';
 import 'package:todo_app/widget/custom_text_button.dart';
 import 'package:todo_app/widget/custom_text_form_field.dart';
@@ -14,11 +16,13 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
-  TextEditingController? emailController = TextEditingController();
+  TextEditingController? emailController =
+      TextEditingController(text: 'you@gmail.com');
 
-  TextEditingController? passwordController = TextEditingController();
+  TextEditingController? passwordController =
+      TextEditingController(text: '12345678');
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +48,7 @@ class _LoginViewState extends State<LoginView> {
                   Text("Sign In", style: theme.textTheme.titleLarge),
                   SizedBox(height: constraints.maxHeight * 0.05),
                   Form(
-                    key: _formKey,
+                    key: formKey,
                     child: Column(
                       children: [
                         CustomTextFormField(
@@ -66,10 +70,9 @@ class _LoginViewState extends State<LoginView> {
                                     : Icons.visibility_off),
                                 onPressed: () {
                                   setState(() {
-                                    isObscure=!isObscure;
+                                    isObscure = !isObscure;
                                   });
                                 }),
-
                             obscureText: isObscure,
                             controller: passwordController,
                             hintText: 'Password',
@@ -80,17 +83,17 @@ class _LoginViewState extends State<LoginView> {
                             },
                           ),
                         ),
-
                         const SizedBox(height: 16.0),
                         CustomElevatedButton(
                           buttonTitle: 'Sign Up',
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
+                            if (formKey.currentState!.validate()) {
                               setState(() {
                                 isLoading = true;
                               });
+
                               try {
-                                await registerUser();
+                                await loginUser();
                                 showSnackBar(
                                     context, '✔️  success', Colors.green);
                                 Navigator.pushReplacementNamed(
@@ -100,19 +103,18 @@ class _LoginViewState extends State<LoginView> {
                                   showSnackBar(context, '❌  weak password',
                                       Colors.redAccent);
                                 }
-                                // else if (e.code == 'email-already-in-use') {
-                                //   showSnackBar(
-                                //       context,
-                                //       'The account already exists',
-                                //       const Color(0xdbf5dc4d));
-                                // }
                               }
-                              setState(() {
-                                isLoading = false;
-                              });
+
+                              Navigator.pushReplacementNamed(
+                                  context, PageRoutesName.layout);
                             }
+                            setState(() {
+                              isLoading = false;
+                            });
                           },
+
                         ),
+
                         TextButton(
                           onPressed: () {},
                           child: Text('Forgot Password?',
@@ -140,16 +142,39 @@ class _LoginViewState extends State<LoginView> {
   void showSnackBar(BuildContext context, String title, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-
         backgroundColor: color,
         content: Text(title),
       ),
     );
   }
 
-  Future<void> registerUser() async {
+  Future<void> loginUser() async {
     var auth = FirebaseAuth.instance;
     UserCredential user = await auth.signInWithEmailAndPassword(
         email: emailController!.text, password: passwordController!.text);
+  }
+  login() async {
+    if (formKey.currentState!.validate()) {
+      EasyLoading.show();
+      try {
+        final credential =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController!.text,
+          password: passwordController!.text,
+        );
+        EasyLoading.dismiss();
+        // SnackBarService.showSuccessMessage("Your Successfully signed in");
+        Navigator.pushReplacementNamed(context, PageRoutesName.layout);
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          EasyLoading.dismiss();
+          // SnackBarService.showErrorMessage('No user found for that email.');
+        } else if (e.code == 'wrong-password') {
+          EasyLoading.dismiss();
+          // SnackBarService.showErrorMessage(
+              // 'Wrong password provided for that user.');
+        }
+      }
+    }
   }
 }
