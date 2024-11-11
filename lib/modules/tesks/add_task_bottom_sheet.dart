@@ -6,6 +6,8 @@ import 'package:todo_app/core/services/snack_bar_service.dart';
 import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/utils/firebase_utils.dart';
 import 'package:todo_app/widget/custom_text_form_field.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   const AddTaskBottomSheet({super.key});
@@ -64,7 +66,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 // maxLines: 3,
               ),
               const SizedBox(height: 20),
-              Text('Select date'),
+              const Text('Select date'),
               InkWell(
                 onTap: () {
                   getSelectedDateTime();
@@ -88,8 +90,12 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                     FirebaseUtils().addTask(taskModel).then((onValue) {
                       Navigator.pop(context);
                       EasyLoading.dismiss();
-                      SnackBarService.showSuccessMessage(
-                          'Task Added Successful');
+                      showTopSnackBar(
+                        Overlay.of(context),
+                        const CustomSnackBar.success(
+                          message: "Task added successfully",
+                        ),
+                      );
                     });
                   }
                 },
@@ -112,7 +118,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       context: context,
       animType: AnimType.scale,
       dialogType: DialogType.success,
-      body: Center(
+      body: const Center(
         child: Text(
           'Login is Successful',
           style: TextStyle(fontStyle: FontStyle.italic),
@@ -130,7 +136,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       context: context,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(
-        Duration(days: 365),
+        const Duration(days: 365),
       ),
     );
     if (currentDate != null) {

@@ -1,9 +1,8 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:todo_app/core/email_validetor.dart';
 import 'package:todo_app/core/page_routes_name.dart';
-import 'package:todo_app/core/services/snack_bar_service.dart';
 import 'package:todo_app/widget/custom_elevated_button.dart';
 import 'package:todo_app/widget/custom_text_button.dart';
 import 'package:todo_app/widget/custom_text_form_field.dart';
@@ -18,11 +17,9 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final formKey = GlobalKey<FormState>();
 
-  TextEditingController? emailController =
-      TextEditingController(text: 'you@gmail.com');
+  TextEditingController? emailController = TextEditingController();
 
-  TextEditingController? passwordController =
-      TextEditingController(text: '12345678');
+  TextEditingController? passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -85,36 +82,111 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         const SizedBox(height: 16.0),
                         CustomElevatedButton(
-                          buttonTitle: 'Sign Up',
+                          buttonTitle: 'Login',
+                          // onPressed: () async {
+                          //   if (formKey.currentState!.validate()) {
+                          //     // setState(() {
+                          //     //   isLoading = true;
+                          //     // });
+                          //
+                          //     try {
+                          //       await loginUser();
+                          //       AwesomeDialog(
+                          //         context: context,
+                          //         dialogType: DialogType.success,
+                          //         animType: AnimType.rightSlide,
+                          //         title: 'Login',
+                          //         desc: 'Login Successfully',
+                          //         btnCancelOnPress: () {},
+                          //         btnOkOnPress: () {
+                          //           Navigator.pushReplacementNamed(
+                          //               context, PageRoutesName.layout);
+                          //         },
+                          //       ).show();
+                          //     } on FirebaseAuthException catch (e) {
+                          //       if (e.code == 'user-not-found' ||
+                          //           e.code == 'wrong-password') {
+                          //         AwesomeDialog(
+                          //           context: context,
+                          //           dialogType: DialogType.error,
+                          //           animType: AnimType.rightSlide,
+                          //           title: 'Login',
+                          //           desc: 'Error email or password',
+                          //           btnOkOnPress: () {},
+                          //         ).show();
+                          //       }
+                          //     } catch (e) {
+                          //       AwesomeDialog(
+                          //         context: context,
+                          //         dialogType: DialogType.error,
+                          //         animType: AnimType.rightSlide,
+                          //         title: 'Login',
+                          //         desc: 'Error email or password',
+                          //         btnOkOnPress: () {},
+                          //       ).show();
+                          //     }
+                          //   }
+                          //   // setState(() {
+                          //   //   isLoading = false;
+                          //   // });
+                          // },
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
-                              setState(() {
-                                isLoading = true;
-                              });
-
                               try {
                                 await loginUser();
-                                showSnackBar(
-                                    context, '✔️  success', Colors.green);
-                                Navigator.pushReplacementNamed(
-                                    context, PageRoutesName.layout);
+                                AwesomeDialog( dismissOnTouchOutside: false,
+                                  context: context,
+                                  dialogType: DialogType.success,
+                                  animType: AnimType.rightSlide,
+                                  title: 'Login',
+                                  desc: 'Login Successfully',
+                                  btnCancelOnPress: () {},
+                                  btnOkOnPress: () {
+                                    Navigator.pushReplacementNamed(
+                                        context, PageRoutesName.layout);
+                                  },
+                                ).show();
                               } on FirebaseAuthException catch (e) {
-                                if (e.code == 'weak-password') {
-                                  showSnackBar(context, '❌  weak password',
-                                      Colors.redAccent);
+                                // Specific error handling for incorrect email or password
+                                if (e.code == 'user-not-found' ||
+                                    e.code == 'wrong-password') {
+                                  AwesomeDialog(
+                                    dismissOnTouchOutside: false,
+                                    context: context,
+                                    dialogType: DialogType.error,
+                                    animType: AnimType.rightSlide,
+                                    title: 'Login',
+                                    desc: 'Error: Incorrect email or password.',
+                                    btnOkOnPress: () {},
+                                  ).show();
+                                } else {
+                                  // General FirebaseAuth error handling
+                                  AwesomeDialog(
+                                    dismissOnTouchOutside: false,
+                                    context: context,
+                                    dialogType: DialogType.error,
+                                    animType: AnimType.rightSlide,
+                                    title: 'Login',
+                                    desc:
+                                        'An error occurred during login. Please try again.',
+                                    btnOkOnPress: () {},
+                                  ).show();
                                 }
+                              } catch (e) {
+                                // Non-FirebaseAuthException errors
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.error,
+                                  // animType: AnimType.rightSlide,
+                                  title: 'Login',
+                                  desc:
+                                      'An unexpected error occurred. Please try again later.',
+                                  btnOkOnPress: () {},
+                                ).show();
                               }
-
-                              Navigator.pushReplacementNamed(
-                                  context, PageRoutesName.layout);
                             }
-                            setState(() {
-                              isLoading = false;
-                            });
                           },
-
                         ),
-
                         TextButton(
                           onPressed: () {},
                           child: Text('Forgot Password?',
@@ -139,42 +211,9 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  void showSnackBar(BuildContext context, String title, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: color,
-        content: Text(title),
-      ),
-    );
-  }
-
   Future<void> loginUser() async {
     var auth = FirebaseAuth.instance;
     UserCredential user = await auth.signInWithEmailAndPassword(
         email: emailController!.text, password: passwordController!.text);
-  }
-  login() async {
-    if (formKey.currentState!.validate()) {
-      EasyLoading.show();
-      try {
-        final credential =
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController!.text,
-          password: passwordController!.text,
-        );
-        EasyLoading.dismiss();
-        // SnackBarService.showSuccessMessage("Your Successfully signed in");
-        Navigator.pushReplacementNamed(context, PageRoutesName.layout);
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found') {
-          EasyLoading.dismiss();
-          // SnackBarService.showErrorMessage('No user found for that email.');
-        } else if (e.code == 'wrong-password') {
-          EasyLoading.dismiss();
-          // SnackBarService.showErrorMessage(
-              // 'Wrong password provided for that user.');
-        }
-      }
-    }
   }
 }

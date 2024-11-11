@@ -13,7 +13,7 @@ class LayoutView extends StatefulWidget {
 class _LayoutViewState extends State<LayoutView> {
   List<Widget> tabs = [
     TasksView(),
-    const SettingsView(),
+     SettingsView(),
   ];
 
   int currentIndex = 0;
