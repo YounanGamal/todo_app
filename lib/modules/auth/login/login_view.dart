@@ -83,58 +83,12 @@ class _LoginViewState extends State<LoginView> {
                         const SizedBox(height: 16.0),
                         CustomElevatedButton(
                           buttonTitle: 'Login',
-                          // onPressed: () async {
-                          //   if (formKey.currentState!.validate()) {
-                          //     // setState(() {
-                          //     //   isLoading = true;
-                          //     // });
-                          //
-                          //     try {
-                          //       await loginUser();
-                          //       AwesomeDialog(
-                          //         context: context,
-                          //         dialogType: DialogType.success,
-                          //         animType: AnimType.rightSlide,
-                          //         title: 'Login',
-                          //         desc: 'Login Successfully',
-                          //         btnCancelOnPress: () {},
-                          //         btnOkOnPress: () {
-                          //           Navigator.pushReplacementNamed(
-                          //               context, PageRoutesName.layout);
-                          //         },
-                          //       ).show();
-                          //     } on FirebaseAuthException catch (e) {
-                          //       if (e.code == 'user-not-found' ||
-                          //           e.code == 'wrong-password') {
-                          //         AwesomeDialog(
-                          //           context: context,
-                          //           dialogType: DialogType.error,
-                          //           animType: AnimType.rightSlide,
-                          //           title: 'Login',
-                          //           desc: 'Error email or password',
-                          //           btnOkOnPress: () {},
-                          //         ).show();
-                          //       }
-                          //     } catch (e) {
-                          //       AwesomeDialog(
-                          //         context: context,
-                          //         dialogType: DialogType.error,
-                          //         animType: AnimType.rightSlide,
-                          //         title: 'Login',
-                          //         desc: 'Error email or password',
-                          //         btnOkOnPress: () {},
-                          //       ).show();
-                          //     }
-                          //   }
-                          //   // setState(() {
-                          //   //   isLoading = false;
-                          //   // });
-                          // },
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
                               try {
                                 await loginUser();
-                                AwesomeDialog( dismissOnTouchOutside: false,
+                                AwesomeDialog(
+                                  dismissOnTouchOutside: false,
                                   context: context,
                                   dialogType: DialogType.success,
                                   animType: AnimType.rightSlide,
@@ -147,7 +101,6 @@ class _LoginViewState extends State<LoginView> {
                                   },
                                 ).show();
                               } on FirebaseAuthException catch (e) {
-                                // Specific error handling for incorrect email or password
                                 if (e.code == 'user-not-found' ||
                                     e.code == 'wrong-password') {
                                   AwesomeDialog(
@@ -160,7 +113,6 @@ class _LoginViewState extends State<LoginView> {
                                     btnOkOnPress: () {},
                                   ).show();
                                 } else {
-                                  // General FirebaseAuth error handling
                                   AwesomeDialog(
                                     dismissOnTouchOutside: false,
                                     context: context,
@@ -173,7 +125,6 @@ class _LoginViewState extends State<LoginView> {
                                   ).show();
                                 }
                               } catch (e) {
-                                // Non-FirebaseAuthException errors
                                 AwesomeDialog(
                                   context: context,
                                   dialogType: DialogType.error,
